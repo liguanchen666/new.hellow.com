@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>apt对接</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            border-color: #6a11cb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2);
+        }
+        
+        .valid-input {
+            border-color: #4CAF50;
+        }
+        
+        .invalid-input {
+            border-color: #f44336;
+        }
+        
+        button {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #ddd;
+            min-height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .result {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .hint {
+            margin-top: 15px;
+            color: #777;
+            font-size: 14px;
+        }
+        
+        .status {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .status.valid {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status.invalid {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            margin-top: 20px;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        .info-box p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>生成卡密🎞</h1>
+        
+        <div class="input-group">
+            <label for="numberInput">请输入卡密：</label>
+            <input type="text" id="numberInput" placeholder="🎥HELLOW">
+            <div id="statusMessage" class="status"></div>
+        </div>
+        
+        <button id="generateBtn" disabled>生成 ˃̶͈ ꇴ ˂̶͈ </button>
+        
+        <div class="result-container">
+            <div id="result" class="result">等待生成...</div>
+            <div class="hint">上面为生成的链接👆</div>
+        </div>
+        
+        <div class="info-box">
+            <p><strong>说明：</strong></p>
+            <p>• 生成链接解封</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const numberInput = document.getElementById('numberInput');
+            const generateBtn = document.getElementById('generateBtn');
+            const resultDisplay = document.getElementById('result');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // 监听输入变化
+            numberInput.addEventListener('input', function() {
+                const inputValue = numberInput.value.trim();
+                
+                // 检查输入是否为666或114433
+                if (inputValue === 'zaW85YnFCC' || inputValue === 'BmUsnldtSj') {
+                    numberInput.classList.remove('invalid-input');
+                    numberInput.classList.add('valid-input');
+                    generateBtn.disabled = false;
+                    statusMessage.textContent = '输入有效，可以生成链接';
+                    statusMessage.className = 'status valid';
+                } else {
+                    numberInput.classList.remove('valid-input');
+                    numberInput.classList.add('invalid-input');
+                    generateBtn.disabled = true;
+                    
+                    if (inputValue === '') {
+                        statusMessage.textContent = '请输入买的卡密';
+                        statusMessage.className = 'status';
+                    } else {
+                        statusMessage.textContent = '请输入买的卡密';
+                        statusMessage.className = 'status invalid';
+                    }
+                }
+            });
+            
+            
+            function generateRandomString(length) {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return result;
+            }
+            
+          
+            generateBtn.addEventListener('click', function() {
+                
+                const randomString = generateRandomString(10);
+                
+                resultDisplay.textContent = randomString;
+                
+                // 添加动画效果
+                resultDisplay.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    resultDisplay.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+  </html>
